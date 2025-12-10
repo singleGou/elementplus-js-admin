@@ -1,0 +1,12 @@
+# Ignore artifacts:
+dist
+node_modules
+public
+.husky
+#.vscode
+.idea
+*.sh
+*.md
+
+src/assets
+

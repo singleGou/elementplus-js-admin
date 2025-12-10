@@ -1,0 +1,45 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit", // 保存时 ESLint 自动修复
+    "source.fixAll.stylelint": "explicit", // 开启 Stylelint 保存自动检测
+    "source.organizeImports": "explicit" // 自动排序 imports
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // 默认 Prettier
+  // ====== ESLint / Prettier ======
+  "eslint.validate": ["javascript", "typescript", "vue"],
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  "prettier.requireConfig": true, // 没有配置文件就不格式化
+  "prettier.useEditorConfig": false,
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // ====== Vue / TypeScript ======
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "vue.inlayHints.missingProps": true,
+  // ====== Tailwind CSS ======
+  "tailwindCSS.includeLanguages": {
+    "vue": "html",
+    "erb": "html"
+  },
+  "tailwindCSS.experimental.classRegex": [],
+  // ====== CSS / SCSS ======
+  "css.validate": false, // 用 Stylelint 替代原生校验
+  "scss.validate": false,
+  "less.validate": false,
+  "stylelint.enable": true,
+  "stylelint.validate": ["css", "scss", "vue", "html"]
+}
