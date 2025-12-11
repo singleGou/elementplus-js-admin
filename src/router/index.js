@@ -1,5 +1,5 @@
+import Layout from '@/layout/index.vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import Layout from '../layout/index.vue'
 
 const routes = [
   {
@@ -10,7 +10,7 @@ const routes = [
       {
         path: 'dashboard',
         name: 'Dashboard',
-        component: () => import('../views/dashboard/index.vue'),
+        component: () => import('@/views/dashboard/index.vue'),
         meta: { title: '首页' },
       },
     ],
@@ -18,7 +18,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    // component: () => import('../views/login/index.vue'),
+    // component: () => import('@/views/login/index.vue'),
     meta: { title: '登录' },
   },
 ]

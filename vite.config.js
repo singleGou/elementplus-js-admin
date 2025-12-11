@@ -6,12 +6,15 @@ import Icons from 'unplugin-icons/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
+      // 自动导入 vue 相关函数，如：ref, reactive, toRef 等
+      // imports: ['vue'],
       resolvers: [
         // 自动导入 Element Plus 相关函数，如：ElMessage, ElNotification 等
         ElementPlusResolver(),
@@ -33,6 +36,10 @@ export default defineConfig({
     Icons({
       // 自动安装图标库
       autoInstall: true,
+    }),
+    createSvgIconsPlugin({
+      iconDirs: [fileURLToPath(new URL('./src/assets/icons', import.meta.url))],
+      symbolId: 'icon-[dir]-[name]',
     }),
   ],
   resolve: {

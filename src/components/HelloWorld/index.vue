@@ -4,14 +4,6 @@ const counterStore = useCounterStore()
 </script>
 
 <template>
-  <el-button type="primary" @click="counterStore.increment">Click Me <i-ep-plus /></el-button>
-
+  <h2>我被点了：{{ counterStore.count }}</h2>
   <h2>加倍：{{ counterStore.double }}</h2>
 </template>
-
-<style scoped>
-.welcome-text {
-  font-size: 20px;
-  color: #333;
-}
-</style>

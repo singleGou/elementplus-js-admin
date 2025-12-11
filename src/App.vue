@@ -1,9 +1,14 @@
 <script setup>
-import { ref } from 'vue'
-const test = ref('hello')
-console.log(test.value)
+import { useCounterStore } from '@/store'
+const counterStore = useCounterStore()
 </script>
 
 <template>
-  <router-view></router-view>
+  <el-button>click me</el-button>
+
+  <!-- 图标组件 -->
+  <i-ep-search />
+  <!-- 图标按钮 -->
+  <el-button type="primary" @click="counterStore.increment"><i-ep-CirclePlus class="el-icon--left" />爸爸点我</el-button>
+  <HelloWorld />
 </template>
