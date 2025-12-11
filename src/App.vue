@@ -8,6 +8,9 @@ const counterStore = useCounterStore()
 
   <!-- 图标组件 -->
   <i-ep-search />
+
+  <SvgIcon name="home" />
+
   <!-- 图标按钮 -->
   <el-button type="primary" @click="counterStore.increment"><i-ep-CirclePlus class="el-icon--left" />爸爸点我</el-button>
   <HelloWorld />
