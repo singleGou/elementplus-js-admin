@@ -1,17 +1,14 @@
 <script setup>
-import { useCounterStore } from '@/store'
-const counterStore = useCounterStore()
+import { getUserList } from '@/api/user'
+
+const getData = async () => {
+  const res = await getUserList()
+  console.log(res)
+}
+
+getData()
 </script>
 
 <template>
-  <el-button type="primary" @click="counterStore.increment">Click Me <i-ep-plus /></el-button>
-
-  <h2>加倍：{{ counterStore.double }}</h2>
+  <h1>dashbaord</h1>
 </template>
-
-<style scoped>
-.welcome-text {
-  font-size: 20px;
-  color: #333;
-}
-</style>
