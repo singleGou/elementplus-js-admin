@@ -26,33 +26,70 @@ const userList = mockjs.mock({
   ],
 })
 
+let users = [
+  {
+    userId: 1,
+    avatar: 'https://pic1.zhimg.com/80/v2-083faf550543c1e9f134b56b3322ee3c_720w.webp',
+    username: 'admin',
+    password: '111111',
+    desc: '下船不谈船里事',
+    roles: ['平台管理员'],
+    buttons: ['cuser.detail'],
+    routes: ['home'],
+    token: 'Admin Token',
+  },
+  {
+    userId: 2,
+    avatar: 'https://pic1.zhimg.com/80/v2-e1427f6a21122ac163ff98d24f55d372_720w.webp',
+    username: 'system',
+    password: '111111',
+    desc: '旧人不谈近况，新人不讲过往',
+    roles: ['系统管理员'],
+    buttons: ['cuser.detail', 'cuser.user'],
+    routes: ['home'],
+    token: 'System Token',
+  },
+]
+
 const createUserList = () => {
-  return mockjs.mock([
-    {
-      userId: 1,
-      avatar: 'https://pic1.zhimg.com/80/v2-083faf550543c1e9f134b56b3322ee3c_720w.webp',
-      username: 'admin',
-      password: '111111',
-      desc: '下船不谈船里事',
-      roles: ['平台管理员'],
-      buttons: ['cuser.detail'],
-      routes: ['home'],
-      token: 'Admin Token',
-    },
-    {
-      userId: 2,
-      avatar: 'https://pic1.zhimg.com/80/v2-e1427f6a21122ac163ff98d24f55d372_720w.webp',
-      username: 'system',
-      password: '111111',
-      desc: '旧人不谈近况，新人不讲过往',
-      roles: ['系统管理员'],
-      buttons: ['cuser.detail', 'cuser.user'],
-      routes: ['home'],
-      token: 'System Token',
-    },
-  ])
+  return users
 }
 export default [
+  // 用户注册接口
+  {
+    url: '/api/user/register',
+    method: 'post',
+    response: ({ body }) => {
+      const { username, password } = body
+      // 检查用户名是否已存在
+      const existingUser = users.find((item) => item.username === username)
+      if (existingUser) {
+        return {
+          code: 201,
+          data: {},
+          message: '用户名已存在',
+        }
+      }
+      // 创建新用户
+      const newUser = {
+        userId: users.length + 1,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`,
+        username,
+        password,
+        desc: '新注册用户',
+        roles: ['普通用户'],
+        buttons: [],
+        routes: ['home'],
+        token: `${username} Token`,
+      }
+      users.push(newUser)
+      return {
+        code: 200,
+        data: {},
+        message: '注册成功',
+      }
+    },
+  },
   // 用户登录接口
   {
     url: '/api/user/login',

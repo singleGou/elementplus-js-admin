@@ -1,17 +1,31 @@
 <script setup>
-import { getUserInfo, login } from '@/api/user'
-import { useUserStore } from '@/store'
+import { getCaptcha, login, register } from '@/api/user'
+import { setToken } from '@/utils/auth'
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const loginFormRef = ref(null)
+const registerFormRef = ref(null)
 const loading = ref(false)
+const isLogin = ref(true)
+const captchaInfo = ref({
+  id: '',
+  img: '',
+})
 
 const loginForm = reactive({
   username: '',
   password: '',
+  captcha: '',
   rememberMe: false,
+})
+
+const registerForm = reactive({
+  username: '',
+  password: '',
+  confirmPassword: '',
+  captcha: '',
 })
 
 const loginRules = {
@@ -23,6 +37,32 @@ const loginRules = {
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 6, message: '密码长度不能少于6位', trigger: 'blur' },
   ],
+  captcha: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
+}
+
+const registerRules = {
+  username: [
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { min: 3, message: '用户名长度不能少于3位', trigger: 'blur' },
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, message: '密码长度不能少于6位', trigger: 'blur' },
+  ],
+  confirmPassword: [
+    { required: true, message: '请确认密码', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (value !== registerForm.password) {
+          callback(new Error('两次输入的密码不一致'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
+  captcha: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
 }
 
 const handleLogin = async () => {
@@ -33,14 +73,16 @@ const handleLogin = async () => {
       loading.value = true
 
       try {
-        const res = await login(loginForm)
+        const { rememberMe, ...loginData } = loginForm
+        const res = await login({ id: captchaInfo.value.id, ...loginData })
 
-        const userStore = useUserStore()
-        userStore.token = res.data.token
+        // const userStore = useUserStore()
+        // userStore.token = `Bearer ${res.data}`
+        setToken(res.data)
 
-        const userInfo = await getUserInfo()
-        userStore.avatar = userInfo.data.avatar
-        userStore.username = userInfo.data.username
+        // const userInfo = await getUserInfo()
+        // userStore.avatar = userInfo.data.avatar
+        // userStore.username = userInfo.data.username
         ElMessage.success(res.message || '登录成功')
         router.push('/')
       } finally {
@@ -49,6 +91,40 @@ const handleLogin = async () => {
     }
   })
 }
+
+const handleRegister = async () => {
+  if (!registerFormRef.value) return
+
+  await registerFormRef.value.validate(async (valid) => {
+    if (valid) {
+      loading.value = true
+
+      try {
+        const { confirmPassword, ...registerData } = registerForm
+        const res = await register({ id: captchaInfo.value.id, ...registerData })
+        ElMessage.success(res.message || '注册成功')
+        isLogin.value = true
+      } finally {
+        loading.value = false
+      }
+    }
+  })
+}
+
+const toggleMode = () => {
+  isLogin.value = !isLogin.value
+}
+
+const fetchCaptcha = async () => {
+  try {
+    const res = await getCaptcha()
+    captchaInfo.value = res.data
+  } catch (error) {
+    ElMessage.error('获取验证码失败')
+  }
+}
+
+fetchCaptcha()
 </script>
 
 <template>
@@ -64,11 +140,11 @@ const handleLogin = async () => {
         <div class="logo-container">
           <i-ep-element-plus class="logo-icon" />
         </div>
-        <h1 class="login-title">欢迎回来</h1>
-        <p class="login-subtitle">请登录您的账户以继续</p>
+        <h1 class="login-title">{{ isLogin ? '欢迎回来' : '创建账户' }}</h1>
+        <p class="login-subtitle">{{ isLogin ? '请登录您的账户以继续' : '请填写以下信息以注册' }}</p>
       </div>
 
-      <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form" size="large">
+      <el-form v-if="isLogin" ref="loginFormRef" :model="loginForm" :rules="loginRules" class="login-form" size="large">
         <el-form-item prop="username">
           <el-input v-model="loginForm.username" placeholder="用户名 / 邮箱" :prefix-icon="undefined">
             <template #prefix>
@@ -85,6 +161,13 @@ const handleLogin = async () => {
           </el-input>
         </el-form-item>
 
+        <el-form-item prop="captcha">
+          <div class="captcha-container">
+            <el-input v-model="loginForm.captcha" placeholder="验证码" @keyup.enter="handleLogin" />
+            <div v-html="captchaInfo.img" @click="fetchCaptcha" class="captcha-image"></div>
+          </div>
+        </el-form-item>
+
         <div class="form-options">
           <el-checkbox v-model="loginForm.rememberMe">记住我</el-checkbox>
           <el-link type="primary" :underline="false">忘记密码？</el-link>
@@ -97,7 +180,52 @@ const handleLogin = async () => {
         </el-form-item>
       </el-form>
 
+      <el-form v-else ref="registerFormRef" :model="registerForm" :rules="registerRules" class="login-form" size="large">
+        <el-form-item prop="username">
+          <el-input v-model="registerForm.username" placeholder="用户名" :prefix-icon="undefined">
+            <template #prefix>
+              <i-ep-user class="input-icon" />
+            </template>
+          </el-input>
+        </el-form-item>
+
+        <el-form-item prop="password">
+          <el-input v-model="registerForm.password" type="password" placeholder="密码" show-password>
+            <template #prefix>
+              <i-ep-lock class="input-icon" />
+            </template>
+          </el-input>
+        </el-form-item>
+
+        <el-form-item prop="confirmPassword">
+          <el-input v-model="registerForm.confirmPassword" type="password" placeholder="确认密码" show-password @keyup.enter="handleRegister">
+            <template #prefix>
+              <i-ep-lock class="input-icon" />
+            </template>
+          </el-input>
+        </el-form-item>
+
+        <el-form-item prop="captcha">
+          <div class="captcha-container">
+            <el-input v-model="registerForm.captcha" placeholder="验证码" @keyup.enter="handleRegister" />
+            <div v-html="captchaInfo.img" @click="fetchCaptcha" class="captcha-image"></div>
+          </div>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button :loading="loading" type="primary" class="login-button" @click="handleRegister" round>
+            {{ loading ? '注册中...' : '注 册' }}
+          </el-button>
+        </el-form-item>
+      </el-form>
+
       <div class="login-footer">
+        <div class="toggle-mode">
+          <span>{{ isLogin ? '还没有账户？' : '已有账户？' }}</span>
+          <el-link type="primary" :underline="false" @click="toggleMode">
+            {{ isLogin ? '立即注册' : '立即登录' }}
+          </el-link>
+        </div>
         <span class="divider">或者</span>
         <div class="social-login">
           <el-button circle size="small">
@@ -123,7 +251,13 @@ const handleLogin = async () => {
   align-items: center;
   background: linear-gradient(135deg, #1a1f38 0%, #252a4a 100%);
   overflow: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
 }
 
 /* 动态背景气泡 */
@@ -286,6 +420,21 @@ const handleLogin = async () => {
   margin-bottom: 24px;
 }
 
+.captcha-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.captcha-container :deep(.el-input) {
+  flex: 1;
+}
+
+.captcha-image {
+  height: 40px;
+}
+
 :deep(.el-checkbox) {
   color: rgba(255, 255, 255, 0.7);
 }
@@ -315,6 +464,17 @@ const handleLogin = async () => {
 .login-footer {
   margin-top: 20px;
   text-align: center;
+}
+
+.toggle-mode {
+  margin-bottom: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.toggle-mode .el-link {
+  margin-left: 5px;
+  font-weight: 500;
 }
 
 .divider {

@@ -1,4 +1,5 @@
 import { useUserStore } from '@/store'
+import { getToken } from '@/utils/auth'
 import axios from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -10,14 +11,15 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
-    const userStore = useUserStore()
-    console.log(userStore.token)
-    if (userStore.token) {
-      config.headers.token = userStore.token
+    // const userStore = useUserStore()
+    if (getToken()) {
+      config.headers.Authorization = `Bearer ${getToken()}`
     }
     return config
   },
   (error) => {
+    // do something with request error
+    console.log(error) // for debug
     return Promise.reject(error)
   }
 )
@@ -25,27 +27,27 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (response) => {
-    const { code, message } = response.data
+    const { code, description } = response.data
     if (code === 200) {
       return response.data
     }
 
-    ElMessage.error(message || 'Error')
-    return Promise.reject(new Error(message || 'Error'))
+    ElMessage.error(description || 'Error')
+    return Promise.reject(new Error(description || 'Error'))
   },
   (error) => {
     if (error.response.data) {
-      const { code, message } = error.response.data
-      if (code === 500) {
+      const { code, description } = error.response.data
+      if (code === 403) {
         ElMessageBox.confirm('当前页面已失效，请重新登录', '提示', {
           confirmButtonText: '确定',
           type: 'warning',
         }).then(() => {
-          localStorage.clear() // @vueuse/core 自动导入
-          window.location.href = '/'
+          const userStore = useUserStore()
+          userStore.resetToken()
         })
       } else {
-        ElMessage.error(message || 'Error')
+        ElMessage.error(description || 'Error')
       }
     }
 

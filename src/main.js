@@ -1,6 +1,9 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
+// Element Plus 样式
+import 'element-plus/dist/index.css'
+
 // global css
 import './styles/index.scss'
 
@@ -9,6 +12,8 @@ import { createPinia } from 'pinia'
 
 // router
 import router from './router'
+
+import './permission'
 
 // icons
 import 'virtual:svg-icons-register' // vite-plugin-svg-icons 插件注册，生成雪碧图并注入 DOM，不引入会导致 svg 图标无法正常显示

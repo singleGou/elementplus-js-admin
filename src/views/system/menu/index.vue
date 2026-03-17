@@ -1,3 +1,3 @@
 <template>
-  <h1>User Role</h1>
+  <h1>菜单管理</h1>
 </template>

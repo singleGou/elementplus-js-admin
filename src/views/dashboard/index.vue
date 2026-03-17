@@ -2,11 +2,13 @@
 import { getUserList } from '@/api/user'
 
 const getData = async () => {
-  const res = await getUserList()
-  console.log(res)
+  try {
+    const res = await getUserList()
+    console.log(res)
+  } catch {}
 }
 
-getData()
+// getData()
 </script>
 
 <template>

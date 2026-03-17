@@ -6,7 +6,6 @@ import Icons from 'unplugin-icons/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
-import { viteMockServe } from 'vite-plugin-mock'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 // https://vite.dev/config/
@@ -46,10 +45,10 @@ export default defineConfig(({ mode }) => {
         iconDirs: [fileURLToPath(new URL('./src/assets/icons', import.meta.url))],
         symbolId: 'icon-[dir]-[name]',
       }),
-      viteMockServe({
-        mockPath: 'mock',
-        enable: mode === 'development',
-      }),
+      // viteMockServe({
+      //   mockPath: 'mock',
+      //   enable: mode === 'development',
+      // }),
     ],
     css: {
       preprocessorOptions: {
@@ -61,6 +60,16 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
+    },
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
       },
     },
   }
