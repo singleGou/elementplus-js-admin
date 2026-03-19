@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@element-plus/icons-vue':
+        specifier: ^2.3.2
+        version: 2.3.2(vue@3.5.25)
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -30,9 +33,6 @@ importers:
       '@iconify-json/ep':
         specifier: ^1.2.3
         version: 1.2.3
-      '@iconify/vue':
-        specifier: ^5.0.0
-        version: 5.0.0(vue@3.5.25)
       '@vitejs/plugin-vue':
         specifier: ^6.0.1
         version: 6.0.2(vite@7.2.7(@types/node@25.0.0)(sass@1.96.0))(vue@3.5.25)
@@ -268,11 +268,6 @@ packages:
 
   '@iconify/utils@3.1.0':
     resolution: {integrity: sha512-Zlzem1ZXhI1iHeeERabLNzBHdOa4VhQbqAcOQaMKuTuyZCpwKbC2R4Dd0Zo3g9EAc+Y4fiarO8HIHRAth7+skw==}
-
-  '@iconify/vue@5.0.0':
-    resolution: {integrity: sha512-C+KuEWIF5nSBrobFJhT//JS87OZ++QDORB6f2q2Wm6fl2mueSTpFBeBsveK0KW9hWiZ4mNiPjsh6Zs4jjdROSg==}
-    peerDependencies:
-      vue: '>=3'
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -2190,11 +2185,6 @@ snapshots:
       '@antfu/install-pkg': 1.1.0
       '@iconify/types': 2.0.0
       mlly: 1.8.0
-
-  '@iconify/vue@5.0.0(vue@3.5.25)':
-    dependencies:
-      '@iconify/types': 2.0.0
-      vue: 3.5.25
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:

@@ -24,8 +24,8 @@ const breadcrumbs = computed(() => {
   const matched = route.matched.filter((item) => item.meta && item.meta.title)
   const first = matched[0]
 
-  if (!first || first.path !== '/dashboard') {
-    return [{ path: '/dashboard', meta: { title: '首页' } }].concat(matched)
+  if (!first || first.path !== '/index') {
+    return [{ path: '/index', meta: { title: '首页' } }].concat(matched)
   }
   return matched
 })

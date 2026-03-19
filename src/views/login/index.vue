@@ -76,8 +76,6 @@ const handleLogin = async () => {
         const { rememberMe, ...loginData } = loginForm
         const res = await login({ id: captchaInfo.value.id, ...loginData })
 
-        // const userStore = useUserStore()
-        // userStore.token = `Bearer ${res.data}`
         setToken(res.data)
 
         // const userInfo = await getUserInfo()

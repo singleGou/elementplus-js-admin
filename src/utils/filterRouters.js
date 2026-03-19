@@ -31,9 +31,10 @@ export const filterRoute = (data) => {
   return data.map((item) => {
     const route = {
       path: item.path,
-      name: item.name,
-      icon: item.icon,
-      meta: item.meta || {},
+      meta: {
+        title: item.title,
+        icon: item.icon || '',
+      },
     }
 
     if (item.children?.length && item.menu_type === 1) {

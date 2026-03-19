@@ -23,6 +23,10 @@ const permissionStore = usePermissionStore()
 
     <el-scrollbar>
       <el-menu :default-active="$route.path" :collapse="isCollapse" unique-opened router class="el-menu-vertical">
+        <el-menu-item index="/index">
+          <el-icon><i-ep-home-filled /></el-icon>
+          <span>首页</span>
+        </el-menu-item>
         <SideBarItem v-for="item in permissionStore.menuList" :key="item.id" :item="item" />
       </el-menu>
     </el-scrollbar>
@@ -55,11 +59,6 @@ const permissionStore = usePermissionStore()
       font-size: 20px;
       transition: all 0.3s;
       box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
-
-      &:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(64, 158, 255, 0.4);
-      }
     }
 
     .logo-text {
@@ -92,6 +91,10 @@ const permissionStore = usePermissionStore()
       &:hover {
         background-color: var(--el-fill-color-light);
       }
+    }
+
+    :deep(.el-sub-menu__title:hover) {
+      background-color: var(--el-fill-color-light);
     }
   }
 }

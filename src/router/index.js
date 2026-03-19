@@ -12,7 +12,7 @@ export const constantRoutes = [
         path: '/index',
         name: 'Home',
         component: () => import('@/views/dashboard/index.vue'),
-        meta: { title: '首页' },
+        meta: { title: '首页', icon: 'i-ep-house' },
       },
     ],
   },

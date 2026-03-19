@@ -1,5 +1,4 @@
 <script setup>
-import { Icon } from '@iconify/vue'
 import { computed } from 'vue'
 
 const props = defineProps({
@@ -18,15 +17,10 @@ const props = defineProps({
 })
 
 const symbolId = computed(() => `#${props.prefix}-${props.name}`)
-// 拼接 iconify 的 key: ep:home-filled
-const iconName = computed(() => {
-  return props.name ? `ep:${props.name.replace('i-ep-', '').replace(/-/g, '-')}` : ''
-})
 </script>
 
 <template>
-  <Icon v-if="iconName" :icon="iconName" :class="className" />
-  <svg v-else :class="className" aria-hidden="true">
+  <svg :class="className" aria-hidden="true">
     <use :href="symbolId" />
   </svg>
 </template>

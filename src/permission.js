@@ -62,10 +62,10 @@ router.beforeEach(async (to, from, next) => {
       }
 
       try {
+        // 获取菜单路由
         await permissionStore.getInfo()
         // 处理成符合 vue 路由格式的路由
         const routers = filterRoute(permissionStore.menuList)
-        console.log(routers)
         // 循环添加路由到父路由下
         routers.forEach((route) => {
           router.addRoute('Index', route)

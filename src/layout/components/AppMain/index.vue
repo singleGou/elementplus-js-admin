@@ -12,10 +12,8 @@
 .app-main {
   flex: 1;
   padding: 24px;
-  overflow: hidden;
   background-color: #f5f7fa;
-  min-height: calc(100vh - 60px);
-  transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  // transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Transitions */
