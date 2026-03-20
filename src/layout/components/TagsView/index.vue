@@ -7,7 +7,7 @@ const route = useRoute()
 const router = useRouter()
 const reload = inject('reload')
 
-const navTags = ref([
+const tagViews = ref([
   {
     path: '/index',
     name: '首页',
@@ -19,7 +19,7 @@ const menuY = ref(0)
 const selectedTag = ref(null)
 
 if (route.fullPath !== '/index') {
-  navTags.value.push({
+  tagViews.value.push({
     path: route.fullPath,
     name: route.meta.title,
   })
@@ -29,14 +29,13 @@ watch(
   () => route.fullPath,
   () => {
     // 避免重复添加相同路由
-    if (navTags.value.some((tag) => tag.path === route.fullPath)) {
+    if (tagViews.value.some((tag) => tag.path === route.fullPath)) {
       return
     }
-    navTags.value.push({
+    tagViews.value.push({
       path: route.fullPath,
       name: route.meta.title,
     })
-    console.log(navTags.value)
   }
 )
 
@@ -48,7 +47,7 @@ const handleClose = (tag) => {
   if (tag.path === route.fullPath) {
     router.push('/index')
   }
-  navTags.value = navTags.value.filter((item) => item.name !== tag.name)
+  tagViews.value = tagViews.value.filter((item) => item.name !== tag.name)
 }
 
 const handleContextMenu = (tag, event) => {
@@ -67,6 +66,16 @@ const closeContextMenu = () => {
   menuVisible.value = false
 }
 
+// 只刷新指定路径的组件
+const triggerReloadByPath = (path) => {
+  if (!reload) return
+  const resolved = router.resolve(path)
+  reload({
+    name: resolved.name ? String(resolved.name) : undefined,
+    fullPath: resolved.fullPath,
+  })
+}
+
 const handleMenuAction = (action) => {
   const tag = selectedTag.value
   if (!tag) {
@@ -77,10 +86,10 @@ const handleMenuAction = (action) => {
   if (action === 'refresh') {
     if (route.fullPath !== tag.path) {
       router.push(tag.path).then(() => {
-        reload && reload()
+        triggerReloadByPath(tag.path)
       })
     } else {
-      reload && reload()
+      triggerReloadByPath(tag.path)
     }
     closeContextMenu()
     return
@@ -91,14 +100,14 @@ const handleMenuAction = (action) => {
   }
 
   if (action === 'closeOthers') {
-    navTags.value = navTags.value.filter((item) => item.path === '/index' || item.path === tag.path)
+    tagViews.value = tagViews.value.filter((item) => item.path === '/index' || item.path === tag.path)
     if (route.fullPath !== tag.path) {
       router.push(tag.path)
     }
   }
 
   if (action === 'closeAll') {
-    navTags.value = navTags.value.filter((item) => item.path === '/index')
+    tagViews.value = tagViews.value.filter((item) => item.path === '/index')
     router.push('/index')
   }
 
@@ -106,8 +115,8 @@ const handleMenuAction = (action) => {
 }
 
 const disableCloseCurrent = computed(() => !selectedTag.value || selectedTag.value.path === '/index')
-const disableCloseOthers = computed(() => !selectedTag.value || navTags.value.length <= 1)
-const disableCloseAll = computed(() => navTags.value.length <= 1)
+const disableCloseOthers = computed(() => !selectedTag.value || tagViews.value.length <= 1)
+const disableCloseAll = computed(() => tagViews.value.length <= 1)
 
 onMounted(() => {
   window.addEventListener('click', closeContextMenu)
@@ -123,7 +132,7 @@ onBeforeUnmount(() => {
     <el-scrollbar>
       <div class="tags-view-content">
         <el-tag
-          v-for="tag in navTags"
+          v-for="tag in tagViews"
           :key="tag.name"
           type="primary"
           :effect="tag.path === route.fullPath ? 'dark' : undefined"

@@ -1,9 +1,12 @@
 <script setup>
-import { provide, ref } from 'vue'
+import { useAppStore } from '@/store/modules/app'
+import { nextTick, provide, ref } from 'vue'
 import AppMain from './components/AppMain/index.vue'
 import NavBar from './components/NavBar/index.vue'
 import SideBar from './components/SideBar/index.vue'
 import TagsView from './components/TagsView/index.vue'
+
+const appStore = useAppStore()
 
 // 侧边栏折叠控制
 const isCollapse = ref(false)
@@ -14,16 +17,19 @@ const toggleSidebar = () => {
 // 标签导航栏显示控制
 const showTagsView = ref(true)
 
-// 内容区刷新控制
-const isRouterAlive = ref(true)
-const reload = () => {
-  isRouterAlive.value = false
-  // nextTick 会在 DOM 更新后执行
-  import('vue').then(({ nextTick }) => {
-    nextTick(() => {
-      isRouterAlive.value = true
-    })
-  })
+const reload = async ({ name, fullPath } = {}) => {
+  if (name) {
+    const idx = appStore.cachedViews.indexOf(name)
+    if (idx !== -1) {
+      appStore.cachedViews.splice(idx, 1)
+      await nextTick()
+      appStore.cachedViews.push(name)
+    }
+  }
+
+  if (fullPath) {
+    appStore.refreshKeys[fullPath] = (appStore.refreshKeys[fullPath] || 0) + 1
+  }
 }
 
 provide('reload', reload)
@@ -45,7 +51,7 @@ provide('reload', reload)
       <TagsView v-if="showTagsView" />
 
       <!-- 内容区 -->
-      <AppMain v-if="isRouterAlive" />
+      <AppMain />
     </div>
   </el-container>
 </template>

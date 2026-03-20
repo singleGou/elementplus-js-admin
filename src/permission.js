@@ -70,7 +70,7 @@ router.beforeEach(async (to, from, next) => {
         routers.forEach((route) => {
           router.addRoute('Index', route)
         })
-
+        console.log(routers)
         // 添加完路由需要重新执行一次路由跳转，否则会出现空白页面
         next({ ...to, replace: true })
       } catch (error) {
